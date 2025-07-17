@@ -1,154 +1,127 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Calculadora de Hora Extra</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon.png" type="image/png" />
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
+  <link rel="icon" href="icon.png" />
+  <meta name="theme-color" content="#007bff" />
   <style>
     :root {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      --box-color: #f0f0f0;
+      --bg: #ffffff;
+      --text: #000000;
       --button-bg: #007bff;
+      --button-text: #ffffff;
       --button-hover: #0056b3;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg-color: #121212;
-        --text-color: #ffffff;
-        --box-color: #1e1e1e;
-        --button-bg: #1a73e8;
-        --button-hover: #1358b0;
+        --bg: #121212;
+        --text: #ffffff;
+        --button-bg: #1e88e5;
+        --button-text: #ffffff;
+        --button-hover: #1565c0;
       }
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       padding: 20px;
       max-width: 500px;
       margin: auto;
+      background-color: var(--bg);
+      color: var(--text);
       font-size: 14px;
     }
 
-    .form-group {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input,
-    button {
+    input, button {
       padding: 8px;
+      margin-top: 10px;
       width: 100%;
-      font-size: 16px;
-      box-sizing: border-box;
-      background-color: var(--box-color);
-      color: var(--text-color);
+      font-size: 14px;
+      border-radius: 5px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+    }
+
+    input:focus, button:focus {
+      outline: none;
+      box-shadow: none;
     }
 
     button {
-      margin-top: 10px;
       background-color: var(--button-bg);
-      color: white;
+      color: var(--button-text);
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      transition: 0.2s;
     }
 
     button:hover {
       background-color: var(--button-hover);
     }
 
+    button:active {
+      transform: scale(0.98);
+    }
+
+    h1 {
+      font-size: 18px;
+    }
+
     h2 {
       margin-top: 25px;
       font-size: 16px;
-      background-color: var(--box-color);
-      padding: 10px 15px;
-      border-radius: 8px;
-      max-width: 100%;
-      box-sizing: border-box;
-      word-wrap: break-word;
-      text-align: left;
     }
   </style>
 </head>
 <body>
   <h1>Calculadora de Hora Extra</h1>
 
-  <div class="form-group">
-    <label for="salarioBruto">Salário bruto (R$):</label>
-    <input type="number" id="salarioBruto" placeholder="Ex: 2500.00" step="0.01" />
-  </div>
+  <label for="salario">Salário Bruto (R$):</label>
+  <input type="number" id="salario" step="0.01" />
 
-  <div class="form-group">
-    <label for="quantidadeHoras">Quantidade de horas extras:</label>
-    <input type="number" id="quantidadeHoras" placeholder="Ex: 5" step="0.1" />
-  </div>
+  <label for="horas">Horas Extras Trabalhadas:</label>
+  <input type="number" id="horas" step="0.01" />
 
   <button onclick="calcular()">Calcular</button>
 
-  <h2 id="resultadoHora"></h2>
-  <h2 id="resultadoExtra"></h2>
+  <h2 id="resultado"></h2>
 
   <script>
-    const salarioInput = document.getElementById('salarioBruto');
-    const horasInput = document.getElementById('quantidadeHoras');
-    const resultadoHora = document.getElementById('resultadoHora');
-    const resultadoExtra = document.getElementById('resultadoExtra');
-
-    window.onload = function () {
-      const salarioSalvo = localStorage.getItem('salario');
-      const horasSalvas = localStorage.getItem('horas');
-
-      if (salarioSalvo) salarioInput.value = salarioSalvo;
-      if (horasSalvas) horasInput.value = horasSalvas;
-
-      if (salarioSalvo && horasSalvas) {
-        calcular(); 
-      }
-    };
-
-    salarioInput.addEventListener('input', () => {
-      localStorage.setItem('salario', salarioInput.value);
-    });
-
-    horasInput.addEventListener('input', () => {
-      localStorage.setItem('horas', horasInput.value);
-    });
+    // Carrega valores salvos
+    window.onload = () => {
+      const salario = localStorage.getItem('salario');
+      const horas = localStorage.getItem('horas');
+      if (salario) document.getElementById('salario').value = salario;
+      if (horas) document.getElementById('horas').value = horas;
+    }
 
     function calcular() {
-      var salario = parseFloat(salarioInput.value);
-      var quantidadeHoras = parseFloat(horasInput.value);
-      var cargaHoraria = 156;
+      const salario = parseFloat(document.getElementById('salario').value);
+      const horas = parseFloat(document.getElementById('horas').value);
+      const cargaHorariaMensal = 144; // 6h x 6 dias x 4 semanas
 
-      if (isNaN(salario) || isNaN(quantidadeHoras)) {
-        alert('Por favor, preencha todos os campos corretamente.');
+      if (isNaN(salario) || isNaN(horas)) {
+        document.getElementById('resultado').innerText = 'Preencha todos os campos.';
         return;
       }
 
-      var valorHora = salario / cargaHoraria;
-      var valorExtra = valorHora * 1.6 * quantidadeHoras;
+      const valorHora = salario / cargaHorariaMensal;
+      const valorHoraExtra = valorHora * 1.6; // 60% adicional
+      const total = valorHoraExtra * horas;
 
-      resultadoHora.innerText =
-        'Valor da sua hora normal: R$ ' + valorHora.toFixed(2);
-      resultadoExtra.innerText =
-        'Total das horas extras: R$ ' + valorExtra.toFixed(2);
+      document.getElementById('resultado').innerText =
+        `Valor da hora: R$ ${valorHora.toFixed(2)}\nValor total das horas extras: R$ ${total.toFixed(2)}`;
+
+      // Salva no localStorage
+      localStorage.setItem('salario', salario);
+      localStorage.setItem('horas', horas);
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
     }
   </script>
 </body>
