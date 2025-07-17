@@ -1,14 +1,36 @@
-self.addEventListener("install", function(event) {
+const CACHE_NAME = 'calculadora-hora-extra-v1';
+const urlsToCache = [
+  './',
+  './index.html',
+  './manifest.json',
+  './icon.png'
+];
+
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open("hora-extra-cache").then(function(cache) {
-      return cache.addAll(["index.html", "manifest.json", "icon.png"]);
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(urlsToCache);
     })
   );
 });
 
-self.addEventListener("fetch", function(event) {
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
+      )
+    )
+  );
+});
+
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then(function(response) {
+    caches.match(event.request).then(response => {
       return response || fetch(event.request);
     })
   );
