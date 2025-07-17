@@ -36,14 +36,14 @@
       font-size: 14px;
     }
 
-    input, button {
-      padding: 8px;
-      margin-top: 10px;
-      width: 100%;
-      font-size: 14px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
+    input,
+button {
+  padding: 8px;
+  width: 100%;
+  font-size: 16px; /* 👈 evita o zoom automático */
+  box-sizing: border-box;
+}
+
 
     input:focus, button:focus {
       outline: none;
