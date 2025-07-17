@@ -6,7 +6,11 @@
   <title>Calculadora de Hora Extra</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.png" />
-  <meta name="theme-color" content="#007bff" />
+
+  <!-- Removemos o theme-color fixo -->
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+
   <style>
     :root {
       --bg: #ffffff;
@@ -27,7 +31,7 @@
     }
 
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       padding: 20px;
       max-width: 500px;
       margin: auto;
@@ -36,24 +40,30 @@
       font-size: 14px;
     }
 
-    input,
-button {
-  padding: 8px;
-  width: 100%;
-  font-size: 16px; /* 👈 evita o zoom automático */
-  box-sizing: border-box;
-}
+    label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
 
-
-    input:focus, button:focus {
-      outline: none;
-      box-shadow: none;
+    input {
+      padding: 8px;
+      width: 100%;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
     }
 
     button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      font-size: 16px;
       background-color: var(--button-bg);
       color: var(--button-text);
       border: none;
+      border-radius: 5px;
       cursor: pointer;
       transition: 0.2s;
     }
@@ -67,12 +77,14 @@ button {
     }
 
     h1 {
-      font-size: 18px;
+      font-size: 20px;
+      margin-bottom: 20px;
     }
 
     h2 {
-      margin-top: 25px;
+      margin-top: 30px;
       font-size: 16px;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -101,7 +113,7 @@ button {
     function calcular() {
       const salario = parseFloat(document.getElementById('salario').value);
       const horas = parseFloat(document.getElementById('horas').value);
-      const cargaHorariaMensal = 144; // 6h x 6 dias x 4 semanas
+      const cargaHorariaMensal = 144;
 
       if (isNaN(salario) || isNaN(horas)) {
         document.getElementById('resultado').innerText = 'Preencha todos os campos.';
@@ -109,13 +121,12 @@ button {
       }
 
       const valorHora = salario / cargaHorariaMensal;
-      const valorHoraExtra = valorHora * 1.6; // 60% adicional
+      const valorHoraExtra = valorHora * 1.6;
       const total = valorHoraExtra * horas;
 
       document.getElementById('resultado').innerText =
         `Valor da hora: R$ ${valorHora.toFixed(2)}\nValor total das horas extras: R$ ${total.toFixed(2)}`;
 
-      // Salva no localStorage
       localStorage.setItem('salario', salario);
       localStorage.setItem('horas', horas);
     }
