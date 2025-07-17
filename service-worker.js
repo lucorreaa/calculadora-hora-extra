@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calculadora-hora-extra-v1';
+const CACHE_NAME = 'calculadora-hora-extra-v2'; 
 const urlsToCache = [
   './',
   './index.html',
@@ -12,6 +12,7 @@ self.addEventListener('install', event => {
       return cache.addAll(urlsToCache);
     })
   );
+  self.skipWaiting(); 
 });
 
 self.addEventListener('activate', event => {
@@ -26,6 +27,7 @@ self.addEventListener('activate', event => {
       )
     )
   );
+  self.clients.claim(); 
 });
 
 self.addEventListener('fetch', event => {
