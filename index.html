@@ -6,99 +6,83 @@
   <title>Calculadora de Hora Extra</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.png" />
-  <meta name="theme-color" content="#ffffff">
-
+  <meta name="theme-color" content="#121212" />
   <style>
     :root {
-      --bg-light: #ffffff;
-      --text-light: #000000;
-      --bg-dark: #121212;
-      --text-dark: #ffffff;
-      --button-bg-light: #007bff;
-      --button-bg-dark: #1e88e5;
-      --button-hover-light: #0056b3;
-      --button-hover-dark: #1565c0;
+      --bg: #ffffff;
+      --text: #000000;
+      --button-bg: #007bff;
+      --button-text: #ffffff;
+      --button-hover: #0056b3;
     }
 
-    body.light {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
-
-    body.dark {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --text: #ffffff;
+        --button-bg: #1e88e5;
+        --button-text: #ffffff;
+        --button-hover: #1565c0;
+      }
     }
 
     body {
       font-family: Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       padding: 20px;
       max-width: 500px;
       margin: auto;
       font-size: 14px;
-      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      font-size: 18px;
     }
 
     label {
       display: block;
-      margin-top: 20px;
+      margin-top: 15px;
       margin-bottom: 5px;
     }
 
-    input {
-      padding: 8px;
+    input,
+    button {
+      padding: 10px;
       width: 100%;
       font-size: 16px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
       box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
 
     button {
       margin-top: 20px;
-      padding: 10px;
-      width: 100%;
-      font-size: 16px;
-      background-color: var(--button-bg-light);
-      color: #fff;
+      background-color: var(--button-bg);
+      color: var(--button-text);
       border: none;
-      border-radius: 5px;
       cursor: pointer;
-      transition: 0.2s;
-    }
-
-    body.dark button {
-      background-color: var(--button-bg-dark);
+      transition: background-color 0.2s;
     }
 
     button:hover {
-      background-color: var(--button-hover-light);
-    }
-
-    body.dark button:hover {
-      background-color: var(--button-hover-dark);
+      background-color: var(--button-hover);
     }
 
     button:active {
       transform: scale(0.98);
     }
 
-    h1 {
-      font-size: 20px;
-      margin-bottom: 20px;
-    }
-
     h2 {
-      margin-top: 30px;
+      margin-top: 25px;
       font-size: 16px;
-      white-space: pre-line;
     }
   </style>
 </head>
 <body>
   <h1>Calculadora de Hora Extra</h1>
-
-  <button onclick="alternarTema()" id="botaoTema">Ativar modo escuro</button>
 
   <label for="salario">Salário Bruto (R$):</label>
   <input type="number" id="salario" step="0.01" />
@@ -111,23 +95,8 @@
   <h2 id="resultado"></h2>
 
   <script>
-    function aplicarTema(tema) {
-      document.body.classList.remove("light", "dark");
-      document.body.classList.add(tema);
-      localStorage.setItem("tema", tema);
-      document.getElementById("botaoTema").innerText =
-        tema === "dark" ? "Ativar modo claro" : "Ativar modo escuro";
-    }
-
-    function alternarTema() {
-      const atual = document.body.classList.contains("dark") ? "dark" : "light";
-      aplicarTema(atual === "dark" ? "light" : "dark");
-    }
-
+    
     window.onload = () => {
-      const temaSalvo = localStorage.getItem("tema") || "light";
-      aplicarTema(temaSalvo);
-
       const salario = localStorage.getItem('salario');
       const horas = localStorage.getItem('horas');
       if (salario) document.getElementById('salario').value = salario;
@@ -137,7 +106,7 @@
     function calcular() {
       const salario = parseFloat(document.getElementById('salario').value);
       const horas = parseFloat(document.getElementById('horas').value);
-      const cargaHorariaMensal = 156;
+      const cargaHorariaMensal = 156; 
 
       if (isNaN(salario) || isNaN(horas)) {
         document.getElementById('resultado').innerText = 'Preencha todos os campos.';
@@ -155,8 +124,11 @@
       localStorage.setItem('horas', horas);
     }
 
+    
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registrado com sucesso.'))
+        .catch(err => console.log('Erro ao registrar Service Worker:', err));
     }
   </script>
 </body>
