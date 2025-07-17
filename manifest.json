@@ -1,11 +1,11 @@
 {
   "name": "Calculadora de Hora Extra",
   "short_name": "Hora Extra",
-  "start_url": "./",
+  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#121212",
   "theme_color": "#007bff",
-  "description": "Calculadora simples de hora extra",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
