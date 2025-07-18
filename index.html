@@ -86,8 +86,6 @@
     <option value="0.5">50%</option>
     <option value="0.6" selected>60%</option>
     <option value="0.7">70%</option>
-    <option value="0.8">80%</option>
-    <option value="0.9">90%</option>
     <option value="1.0">100%</option>
     <option value="1.2">120%</option>
   </select>
@@ -108,4 +106,37 @@
       if (percentual) document.getElementById('percentual').value = percentual;
     };
 
-    function cal
+    function calcular() {
+      const salario = parseFloat(document.getElementById('salario').value);
+      const horas = parseFloat(document.getElementById('horas').value);
+      const adicional = parseFloat(document.getElementById('percentual').value);
+      const cargaHorariaMensal = 156;
+
+      if (isNaN(salario) || isNaN(horas) || isNaN(adicional)) {
+        document.getElementById('resultado').innerText = 'Preencha todos os campos.';
+        return;
+      }
+
+      const valorHora = salario / cargaHorariaMensal;
+      const valorHoraExtra = valorHora * (1 + adicional);
+      const total = valorHoraExtra * horas;
+
+      document.getElementById('resultado').innerText =
+        `Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
+        `Valor da hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
+        `Valor total das horas extras: R$ ${total.toFixed(2)}`;
+
+      localStorage.setItem('salario', salario);
+      localStorage.setItem('horas', horas);
+      localStorage.setItem('percentual', adicional);
+    }
+
+    // Registra o service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registrado com sucesso.'))
+        .catch(err => console.log('Erro ao registrar Service Worker:', err));
+    }
+  </script>
+</body>
+</html>
