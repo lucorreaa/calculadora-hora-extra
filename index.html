@@ -94,10 +94,12 @@
       background-color: var(--card);
       padding: 15px;
       border-radius: 8px;
-      transition: background-color 0.3s;
+      transition: background-color 0.3s, opacity 0.5s;
+      opacity: 0;
+    }
+
+    .resultado.visible {
       opacity: 1;
-      transition: opacity 0.5s ease;
-      white-space: pre-line;
     }
 
     .erro {
@@ -105,7 +107,6 @@
       padding: 10px;
       border-radius: 5px;
       margin-top: 10px;
-      white-space: pre-line;
     }
 
     .dica {
@@ -145,7 +146,7 @@
   <button onclick="calcular()">Calcular</button>
   <button onclick="preencherExemplo()">Preencher com exemplo</button>
 
-  <div id="resultado" class="resultado" style="display:none;"></div>
+  <div id="resultado" class="resultado"></div>
   <div id="mensagem" class="erro" style="display:none;"></div>
 
   <script>
@@ -179,37 +180,33 @@
       const mensagemEl = document.getElementById('mensagem');
 
       if (isNaN(salario) || isNaN(horas) || isNaN(adicional) || isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0) {
-        resultadoEl.style.display = 'none';
+        resultadoEl.classList.remove('visible');
         mensagemEl.innerText = '⚠️ Preencha todos os campos corretamente.';
         mensagemEl.style.display = 'block';
         return;
       }
 
       mensagemEl.style.display = 'none';
+      const valorHora = salario / cargaHorariaMensal;
+      const valorHoraExtra = valorHora * (1 + adicional);
+      const total = valorHoraExtra * horas;
 
       
-      resultadoEl.style.opacity = 0;
-
+      resultadoEl.classList.remove('visible');
       setTimeout(() => {
-        const valorHora = salario / cargaHorariaMensal;
-        const valorHoraExtra = valorHora * (1 + adicional);
-        const total = valorHoraExtra * horas;
-
         resultadoEl.innerText =
           `💵 Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
           `➕ Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
-          `🧮 Total das horas extras: R$ ${total.toFixed(2)}\n\n` +
-          `📌 Fórmula: (Salário / Carga Horária) × (1 + % adicional)`;
+          `🧮 Total das horas extras: R$ ${total.toFixed(2)}`;
 
         resultadoEl.style.display = 'block';
-        resultadoEl.style.opacity = 1;
+        resultadoEl.classList.add('visible');
 
-        
         localStorage.setItem('salario', salario);
         localStorage.setItem('horas', horas);
         localStorage.setItem('percentual', adicional);
         localStorage.setItem('carga', cargaHorariaMensal);
-      }, 300); 
+      }, 300);
     }
 
     if ('serviceWorker' in navigator) {
