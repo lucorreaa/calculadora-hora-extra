@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Calculadora de Hora Extra</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icon.png" />
+  <meta name="theme-color" content="#121212" />
   <style>
     :root {
       --bg: #ffffff;
@@ -14,6 +17,7 @@
       --button-text: #ffffff;
       --button-hover: #0056b3;
     }
+
     @media (prefers-color-scheme: dark) {
       :root {
         --bg: #121212;
@@ -25,9 +29,11 @@
         --button-hover: #1565c0;
       }
     }
+
     * {
       box-sizing: border-box;
     }
+
     body {
       font-family: Arial, sans-serif;
       background-color: var(--bg);
@@ -37,22 +43,24 @@
       margin: auto;
       font-size: 14px;
       min-height: 100vh;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 0.3s, color 0.3s;
     }
+
     h1 {
       font-size: 18px;
       text-align: center;
     }
+
     .grupo {
       margin-bottom: 20px;
-      animation: fadeIn 0.5s ease-in-out;
     }
+
     label {
       display: block;
       margin-top: 10px;
       margin-bottom: 5px;
-      transition: color 0.3s ease;
     }
+
     input,
     select,
     button {
@@ -61,66 +69,46 @@
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 5px;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      transition: background-color 0.3s, color 0.3s;
     }
-    input:focus,
-    select:focus {
-      border-color: #007bff;
-      outline: none;
-      box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
-    }
+
     button {
       margin-top: 10px;
       background-color: var(--button-bg);
       color: var(--button-text);
       border: none;
       cursor: pointer;
-      transition: background-color 0.2s ease, transform 0.2s ease;
+      transition: background-color 0.2s;
     }
+
     button:hover {
       background-color: var(--button-hover);
     }
+
     button:active {
       transform: scale(0.98);
     }
-    #resultado {
+
+    .resultado {
       margin-top: 25px;
       background-color: var(--card);
       padding: 15px;
       border-radius: 8px;
-      white-space: pre-line;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      display: none;
-    }
-    #resultado.show {
+      transition: background-color 0.3s, opacity 0.3s ease;
       opacity: 1;
-      transform: translateY(0);
-      display: block;
+      white-space: pre-line;
     }
-    #mensagem {
+
+    .erro {
       background-color: var(--error);
       padding: 10px;
       border-radius: 5px;
       margin-top: 10px;
-      animation: fadeIn 0.4s ease-in-out;
-      display: none;
     }
+
     .dica {
       font-size: 12px;
       color: gray;
-      transition: color 0.3s ease;
-    }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
   </style>
 </head>
@@ -152,15 +140,14 @@
     <p class="dica">Geralmente 156h, 160h ou 220h mensais.</p>
   </div>
 
-  <button id="btnCalcular">Calcular</button>
-  <button id="btnExemplo">Preencher com exemplo</button>
+  <button onclick="calcular()">Calcular</button>
+  <button onclick="preencherExemplo()">Preencher com exemplo</button>
 
-  <div id="resultado"></div>
-  <div id="mensagem"></div>
+  <div id="resultado" class="resultado" style="display:none;"></div>
+  <div id="mensagem" class="erro" style="display:none;"></div>
 
   <script>
-    // Função para carregar dados do localStorage
-    function carregarDados() {
+    window.onload = () => {
       const salario = localStorage.getItem('salario');
       const horas = localStorage.getItem('horas');
       const percentual = localStorage.getItem('percentual');
@@ -170,9 +157,8 @@
       if (horas) document.getElementById('horas').value = horas;
       if (percentual) document.getElementById('percentual').value = percentual;
       if (carga) document.getElementById('carga').value = carga;
-    }
+    };
 
-    // Função para preencher valores de exemplo
     function preencherExemplo() {
       document.getElementById('salario').value = 3000;
       document.getElementById('horas').value = 10;
@@ -181,7 +167,6 @@
       calcular();
     }
 
-    // Função principal de cálculo
     function calcular() {
       const salario = parseFloat(document.getElementById('salario').value);
       const horas = parseFloat(document.getElementById('horas').value);
@@ -195,7 +180,7 @@
         isNaN(salario) || isNaN(horas) || isNaN(adicional) ||
         isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0
       ) {
-        resultadoEl.classList.remove('show');
+        resultadoEl.style.display = 'none';
         mensagemEl.innerText = '⚠️ Preencha todos os campos corretamente.';
         mensagemEl.style.display = 'block';
         return;
@@ -203,31 +188,35 @@
 
       mensagemEl.style.display = 'none';
 
-      const valorHora = salario / cargaHorariaMensal;
-      const valorHoraExtra = valorHora * (1 + adicional);
-      const total = valorHoraExtra * horas;
+      
+      resultadoEl.style.opacity = '0';
 
-      resultadoEl.innerText =
-        `💵 Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
-        `➕ Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
-        `🧮 Total das horas extras: R$ ${total.toFixed(2)}\n\n` +
-        `📌 Fórmula: (Salário / Carga Horária) × (1 + % adicional)`;
+      setTimeout(() => {
+        const valorHora = salario / cargaHorariaMensal;
+        const valorHoraExtra = valorHora * (1 + adicional);
+        const total = valorHoraExtra * horas;
 
-      resultadoEl.classList.add('show');
+        resultadoEl.innerText =
+          `💵 Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
+          `➕ Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
+          `🧮 Total das horas extras: R$ ${total.toFixed(2)}\n\n` +
+          `📌 Fórmula: (Salário / Carga Horária) × (1 + % adicional)`;
 
-      // Salvar no localStorage
-      localStorage.setItem('salario', salario);
-      localStorage.setItem('horas', horas);
-      localStorage.setItem('percentual', adicional);
-      localStorage.setItem('carga', cargaHorariaMensal);
+        resultadoEl.style.display = 'block';
+        resultadoEl.style.opacity = '1';
+
+        localStorage.setItem('salario', salario);
+        localStorage.setItem('horas', horas);
+        localStorage.setItem('percentual', adicional);
+        localStorage.setItem('carga', cargaHorariaMensal);
+      }, 200);
     }
 
-    // Eventos dos botões
-    document.getElementById('btnCalcular').addEventListener('click', calcular);
-    document.getElementById('btnExemplo').addEventListener('click', preencherExemplo);
-
-    // Carregar dados ao abrir página
-    window.onload = carregarDados;
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registrado com sucesso.'))
+        .catch(err => console.log('Erro ao registrar Service Worker:', err));
+    }
   </script>
 </body>
 </html>
