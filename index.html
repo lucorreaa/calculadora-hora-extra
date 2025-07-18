@@ -94,8 +94,9 @@
       background-color: var(--card);
       padding: 15px;
       border-radius: 8px;
-      transition: background-color 0.3s, opacity 0.3s ease;
+      transition: background-color 0.3s;
       opacity: 1;
+      transition: opacity 0.5s ease;
       white-space: pre-line;
     }
 
@@ -104,6 +105,7 @@
       padding: 10px;
       border-radius: 5px;
       margin-top: 10px;
+      white-space: pre-line;
     }
 
     .dica {
@@ -176,10 +178,7 @@
       const resultadoEl = document.getElementById('resultado');
       const mensagemEl = document.getElementById('mensagem');
 
-      if (
-        isNaN(salario) || isNaN(horas) || isNaN(adicional) ||
-        isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0
-      ) {
+      if (isNaN(salario) || isNaN(horas) || isNaN(adicional) || isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0) {
         resultadoEl.style.display = 'none';
         mensagemEl.innerText = '⚠️ Preencha todos os campos corretamente.';
         mensagemEl.style.display = 'block';
@@ -189,7 +188,7 @@
       mensagemEl.style.display = 'none';
 
       
-      resultadoEl.style.opacity = '0';
+      resultadoEl.style.opacity = 0;
 
       setTimeout(() => {
         const valorHora = salario / cargaHorariaMensal;
@@ -200,16 +199,17 @@
           `💵 Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
           `➕ Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
           `🧮 Total das horas extras: R$ ${total.toFixed(2)}\n\n` +
-          
+          `📌 Fórmula: (Salário / Carga Horária) × (1 + % adicional)`;
 
         resultadoEl.style.display = 'block';
-        resultadoEl.style.opacity = '1';
+        resultadoEl.style.opacity = 1;
 
+        
         localStorage.setItem('salario', salario);
         localStorage.setItem('horas', horas);
         localStorage.setItem('percentual', adicional);
         localStorage.setItem('carga', cargaHorariaMensal);
-      }, 200);
+      }, 200); 
     }
 
     if ('serviceWorker' in navigator) {
