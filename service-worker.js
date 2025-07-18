@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calculadora-hora-extra-v7'; 
+const CACHE_NAME = 'calculadora-hora-extra-v8'; 
 const urlsToCache = [
   './',
   './index.html',
