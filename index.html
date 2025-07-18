@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>Calculadora de Hora Extra</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon.png" />
@@ -11,9 +11,27 @@
     :root {
       --bg: #ffffff;
       --text: #000000;
+      --card: #f5f5f5;
+      --error: #ffdddd;
       --button-bg: #007bff;
       --button-text: #ffffff;
       --button-hover: #0056b3;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --text: #ffffff;
+        --card: #1e1e1e;
+        --error: #5a1e1e;
+        --button-bg: #1e88e5;
+        --button-text: #ffffff;
+        --button-hover: #1565c0;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
@@ -25,17 +43,23 @@
       margin: auto;
       font-size: 14px;
       min-height: 100vh;
-      box-sizing: border-box;
       transition: background-color 0.3s, color 0.3s;
     }
 
     h1 {
       font-size: 18px;
+      text-align: center;
+      animation: fade-in 0.6s ease forwards;
+    }
+
+    .grupo {
+      margin-bottom: 20px;
+      animation: fade-in 0.6s ease forwards;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 10px;
       margin-bottom: 5px;
     }
 
@@ -45,69 +69,104 @@
       padding: 10px;
       width: 100%;
       font-size: 16px;
-      box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 5px;
+      transition: background-color 0.3s, color 0.3s, transform 0.2s;
+      opacity: 0;
+      animation: fade-in 0.8s ease forwards;
     }
 
     button {
-      margin-top: 20px;
+      margin-top: 10px;
       background-color: var(--button-bg);
       color: var(--button-text);
       border: none;
       cursor: pointer;
-      transition: background-color 0.2s;
     }
 
     button:hover {
       background-color: var(--button-hover);
+      transform: scale(1.02);
     }
 
     button:active {
-      transform: scale(0.98);
+      transform: scale(0.97);
     }
 
-    #resultado {
+    .resultado {
       margin-top: 25px;
-      font-size: 16px;
-      white-space: pre-line;
+      background-color: var(--card);
+      padding: 15px;
+      border-radius: 8px;
+      transition: background-color 0.3s, opacity 0.3s, transform 0.3s;
       opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
+      transform: translateY(20px);
     }
 
-    #resultado.mostrar {
+    .resultado.visible {
       opacity: 1;
       transform: translateY(0);
+    }
+
+    .erro {
+      background-color: var(--error);
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .dica {
+      font-size: 12px;
+      color: gray;
+      opacity: 0;
+      animation: fade-in 1s ease forwards;
+    }
+
+    @keyframes fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
   </style>
 </head>
 <body>
   <h1>Calculadora de Hora Extra</h1>
 
-  <label for="salario">Salário Bruto (R$):</label>
-  <input type="number" id="salario" step="0.01" />
+  <div class="grupo">
+    <label for="salario">💰 Salário Bruto (R$):</label>
+    <input type="number" id="salario" step="0.01" placeholder="Ex: 3000" />
+    <p class="dica">Informe seu salário bruto mensal.</p>
 
-  <label for="horas">Horas Extras Trabalhadas:</label>
-  <input type="number" id="horas" step="0.01" />
+    <label for="horas">⏰ Horas Extras Trabalhadas:</label>
+    <input type="number" id="horas" step="0.01" placeholder="Ex: 10" />
+    <p class="dica">Total de horas extras no mês.</p>
 
-  <label for="percentual">Porcentagem da Hora Extra:</label>
-  <select id="percentual">
-    <option value="0.5">50%</option>
-    <option value="0.6" selected>60%</option>
-    <option value="0.7">70%</option>
-    <option value="0.8">80%</option>
-    <option value="0.9">90%</option>
-    <option value="1.0">100%</option>
-    <option value="1.2">120%</option>
-  </select>
+    <label for="percentual">📈 Porcentagem da Hora Extra:</label>
+    <select id="percentual">
+      <option value="0.5">50%</option>
+      <option value="0.6" selected>60%</option>
+      <option value="0.7">70%</option>
+      <option value="0.8">80%</option>
+      <option value="0.9">90%</option>
+      <option value="1.0">100%</option>
+      <option value="1.2">120%</option>
+    </select>
 
-  <label for="carga">Carga Horária Mensal (horas):</label>
-  <input type="number" id="carga" step="1" min="1" value="156" />
+    <label for="carga">⚙️ Carga Horária Mensal (horas):</label>
+    <input type="number" id="carga" step="1" min="1" value="156" />
+    <p class="dica">Geralmente 156h, 160h ou 220h mensais.</p>
+  </div>
 
   <button onclick="calcular()">Calcular</button>
+  <button onclick="preencherExemplo()">Preencher com exemplo</button>
 
-  <h2 id="resultado"></h2>
+  <div id="resultado" class="resultado" style="display:none;"></div>
+  <div id="mensagem" class="erro" style="display:none;"></div>
 
   <script>
     window.onload = () => {
@@ -122,35 +181,43 @@
       if (carga) document.getElementById('carga').value = carga;
     };
 
+    function preencherExemplo() {
+      document.getElementById('salario').value = 3000;
+      document.getElementById('horas').value = 10;
+      document.getElementById('percentual').value = "0.6";
+      document.getElementById('carga').value = 160;
+      calcular();
+    }
+
     function calcular() {
       const salario = parseFloat(document.getElementById('salario').value);
       const horas = parseFloat(document.getElementById('horas').value);
       const adicional = parseFloat(document.getElementById('percentual').value);
       const cargaHorariaMensal = parseFloat(document.getElementById('carga').value);
-      const resultado = document.getElementById('resultado');
 
-      if (
-        isNaN(salario) || isNaN(horas) || isNaN(adicional) ||
-        isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0
-      ) {
-        resultado.innerText = 'Preencha todos os campos corretamente.';
-        resultado.classList.add('mostrar');
+      const resultadoEl = document.getElementById('resultado');
+      const mensagemEl = document.getElementById('mensagem');
+
+      if (isNaN(salario) || isNaN(horas) || isNaN(adicional) || isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0) {
+        resultadoEl.style.display = 'none';
+        resultadoEl.classList.remove('visible');
+        mensagemEl.innerText = '⚠️ Preencha todos os campos corretamente.';
+        mensagemEl.style.display = 'block';
         return;
       }
 
+      mensagemEl.style.display = 'none';
       const valorHora = salario / cargaHorariaMensal;
       const valorHoraExtra = valorHora * (1 + adicional);
       const total = valorHoraExtra * horas;
 
-      resultado.classList.remove('mostrar'); 
-      void resultado.offsetWidth; 
+      resultadoEl.innerText =
+        `💵 Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
+        `➕ Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
+        `🧮 Total das horas extras: R$ ${total.toFixed(2)}\n\n` +
 
-      resultado.innerText =
-        `Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
-        `Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
-        `Total das horas extras: R$ ${total.toFixed(2)}`;
-
-      resultado.classList.add('mostrar');
+      resultadoEl.style.display = 'block';
+      resultadoEl.classList.add('visible');
 
       localStorage.setItem('salario', salario);
       localStorage.setItem('horas', horas);
