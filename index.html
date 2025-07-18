@@ -9,13 +9,22 @@
   <meta name="theme-color" content="#121212" />
   <style>
     :root {
-      --bg: #ffffff;
-      --text: #000000;
-      --button-bg: #007bff;
-      --button-text: #ffffff;
-      --button-hover: #0056b3;
-    }
+  --bg: #ffffff;
+  --text: #000000;
+  --button-bg: #007bff;
+  --button-text: #ffffff;
+  --button-hover: #0056b3;
+}
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #121212;
+    --text: #ffffff;
+    --button-bg: #1e88e5;
+    --button-text: #ffffff;
+    --button-hover: #1565c0;
+  }
+}
     body {
       font-family: Arial, sans-serif;
       background-color: var(--bg);
