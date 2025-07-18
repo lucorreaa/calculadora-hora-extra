@@ -9,22 +9,23 @@
   <meta name="theme-color" content="#121212" />
   <style>
     :root {
-  --bg: #ffffff;
-  --text: #000000;
-  --button-bg: #007bff;
-  --button-text: #ffffff;
-  --button-hover: #0056b3;
-}
+      --bg: #ffffff;
+      --text: #000000;
+      --button-bg: #007bff;
+      --button-text: #ffffff;
+      --button-hover: #0056b3;
+    }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121212;
-    --text: #ffffff;
-    --button-bg: #1e88e5;
-    --button-text: #ffffff;
-    --button-hover: #1565c0;
-  }
-}
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121212;
+        --text: #ffffff;
+        --button-bg: #1e88e5;
+        --button-text: #ffffff;
+        --button-hover: #1565c0;
+      }
+    }
+
     body {
       font-family: Arial, sans-serif;
       background-color: var(--bg);
@@ -78,6 +79,7 @@
     h2 {
       margin-top: 25px;
       font-size: 16px;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -95,11 +97,14 @@
     <option value="0.5">50%</option>
     <option value="0.6" selected>60%</option>
     <option value="0.7">70%</option>
-    <option value="0.8">80%</option>  
-    <option value="0.9">90%</option>  
+    <option value="0.8">80%</option>
+    <option value="0.9">90%</option>
     <option value="1.0">100%</option>
     <option value="1.2">120%</option>
   </select>
+
+  <label for="carga">Carga Horária Mensal (horas):</label>
+  <input type="number" id="carga" step="1" min="1" value="156" />
 
   <button onclick="calcular()">Calcular</button>
 
@@ -110,38 +115,42 @@
       const salario = localStorage.getItem('salario');
       const horas = localStorage.getItem('horas');
       const percentual = localStorage.getItem('percentual');
+      const carga = localStorage.getItem('carga');
 
-      if (salario !== null) document.getElementById('salario').value = salario;
-      if (horas !== null) document.getElementById('horas').value = horas;
-      if (percentual !== null) document.getElementById('percentual').value = percentual;
+      if (salario) document.getElementById('salario').value = salario;
+      if (horas) document.getElementById('horas').value = horas;
+      if (percentual) document.getElementById('percentual').value = percentual;
+      if (carga) document.getElementById('carga').value = carga;
     };
 
     function calcular() {
-  const salario = parseFloat(document.getElementById('salario').value);
-  const horas = parseFloat(document.getElementById('horas').value);
-  const adicional = parseFloat(document.getElementById('percentual').value);
-  const cargaHorariaMensal = parseFloat(document.getElementById('carga').value);
+      const salario = parseFloat(document.getElementById('salario').value);
+      const horas = parseFloat(document.getElementById('horas').value);
+      const adicional = parseFloat(document.getElementById('percentual').value);
+      const cargaHorariaMensal = parseFloat(document.getElementById('carga').value);
 
-  if (isNaN(salario) || isNaN(horas) || isNaN(adicional) || isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0) {
-    document.getElementById('resultado').innerText = 'Preencha todos os campos corretamente.';
-    return;
-  }
+      if (
+        isNaN(salario) || isNaN(horas) || isNaN(adicional) ||
+        isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0
+      ) {
+        document.getElementById('resultado').innerText = 'Preencha todos os campos corretamente.';
+        return;
+      }
 
-  const valorHora = salario / cargaHorariaMensal;
-  const valorHoraExtra = valorHora * (1 + adicional);
-  const total = valorHoraExtra * horas;
+      const valorHora = salario / cargaHorariaMensal;
+      const valorHoraExtra = valorHora * (1 + adicional);
+      const total = valorHoraExtra * horas;
 
-  document.getElementById('resultado').innerText =
-    `Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
-    `Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
-    `Total das horas extras: R$ ${total.toFixed(2)}`;
+      document.getElementById('resultado').innerText =
+        `Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
+        `Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
+        `Total das horas extras: R$ ${total.toFixed(2)}`;
 
-  localStorage.setItem('salario', salario);
-  localStorage.setItem('horas', horas);
-  localStorage.setItem('percentual', adicional);
-  localStorage.setItem('carga', cargaHorariaMensal);
-}
-
+      localStorage.setItem('salario', salario);
+      localStorage.setItem('horas', horas);
+      localStorage.setItem('percentual', adicional);
+      localStorage.setItem('carga', cargaHorariaMensal);
+    }
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
