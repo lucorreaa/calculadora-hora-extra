@@ -124,15 +124,16 @@
     };
 
     function calcular() {
-      const salario = parseFloat(document.getElementById('salario').value);
-      const horas = parseFloat(document.getElementById('horas').value);
-      const adicional = parseFloat(document.getElementById('percentual').value);
-      const cargaHorariaMensal = parseFloat(document.getElementById('carga').value);
+      const salarioEl = document.getElementById('salario');
+      const horasEl = document.getElementById('horas');
+      const percentualEl = document.getElementById('percentual');
 
-      if (
-        isNaN(salario) || isNaN(horas) || isNaN(adicional) ||
-        isNaN(cargaHorariaMensal) || cargaHorariaMensal <= 0
-      ) {
+      const salario = parseFloat(salarioEl.value);
+      const horas = parseFloat(horasEl.value);
+      const adicional = parseFloat(percentualEl.value);
+      const cargaHorariaMensal = 156;
+
+      if (isNaN(salario) || isNaN(horas) || isNaN(adicional)) {
         document.getElementById('resultado').innerText = 'Preencha todos os campos corretamente.';
         return;
       }
@@ -149,7 +150,6 @@
       localStorage.setItem('salario', salario);
       localStorage.setItem('horas', horas);
       localStorage.setItem('percentual', adicional);
-      localStorage.setItem('carga', cargaHorariaMensal);
     }
 
     if ('serviceWorker' in navigator) {
