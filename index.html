@@ -95,25 +95,28 @@
   <h2 id="resultado"></h2>
 
   <script>
-    // Carrega valores salvos
     window.onload = () => {
       const salario = localStorage.getItem('salario');
       const horas = localStorage.getItem('horas');
       const percentual = localStorage.getItem('percentual');
 
-      if (salario) document.getElementById('salario').value = salario;
-      if (horas) document.getElementById('horas').value = horas;
-      if (percentual) document.getElementById('percentual').value = percentual;
+      if (salario !== null) document.getElementById('salario').value = salario;
+      if (horas !== null) document.getElementById('horas').value = horas;
+      if (percentual !== null) document.getElementById('percentual').value = percentual;
     };
 
     function calcular() {
-      const salario = parseFloat(document.getElementById('salario').value);
-      const horas = parseFloat(document.getElementById('horas').value);
-      const adicional = parseFloat(document.getElementById('percentual').value);
+      const salarioEl = document.getElementById('salario');
+      const horasEl = document.getElementById('horas');
+      const percentualEl = document.getElementById('percentual');
+
+      const salario = parseFloat(salarioEl.value);
+      const horas = parseFloat(horasEl.value);
+      const adicional = parseFloat(percentualEl.value);
       const cargaHorariaMensal = 156;
 
       if (isNaN(salario) || isNaN(horas) || isNaN(adicional)) {
-        document.getElementById('resultado').innerText = 'Preencha todos os campos.';
+        document.getElementById('resultado').innerText = 'Preencha todos os campos corretamente.';
         return;
       }
 
@@ -123,15 +126,14 @@
 
       document.getElementById('resultado').innerText =
         `Valor da hora: R$ ${valorHora.toFixed(2)}\n` +
-        `Valor da hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
-        `Valor total das horas extras: R$ ${total.toFixed(2)}`;
+        `Hora extra (${(adicional * 100).toFixed(0)}%): R$ ${valorHoraExtra.toFixed(2)}\n` +
+        `Total das horas extras: R$ ${total.toFixed(2)}`;
 
       localStorage.setItem('salario', salario);
       localStorage.setItem('horas', horas);
       localStorage.setItem('percentual', adicional);
     }
 
-    // Registra o service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js')
         .then(() => console.log('Service Worker registrado com sucesso.'))
